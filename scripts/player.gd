@@ -3,6 +3,8 @@ class_name Player;
 
 @onready var animator = $AnimationPlayer
 
+
+
 var viewport_size;
 
 var speed = 300.0;
@@ -10,6 +12,7 @@ var speed = 300.0;
 var gravity = 15.0;
 var max_fall_velocity = 1000.0;
 var jump_velocity = -800;
+const stable_velocity = -800;
 var last_platform_touched_y = 0;
 
 func _ready():
@@ -53,8 +56,15 @@ func _physics_process(delta):
 func jump():
 	velocity.y = jump_velocity;
 
-
+func boost_velocity():
+		jump_velocity += 0.67 * stable_velocity
+		
+		while jump_velocity < stable_velocity - 20:
+			print(jump_velocity)
+			await get_tree().create_timer(0.4).timeout
+			jump_velocity = stable_velocity + (jump_velocity - stable_velocity) * 0.9
 
 func _on_visible_on_screen_notifier_2d_screen_exited():
 	get_tree().reload_current_scene();
+	
 	

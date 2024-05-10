@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://bua24ckal3kj3"]
+
+[ext_resource type="Texture2D" uid="uid://djd46sh4keg26" path="res://icon.svg" id="1_d7d4t"]
+[ext_resource type="Script" path="res://scripts/speed_power_up.gd" id="1_rdsph"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_yt4jg"]
+radius = 30.0
+
+[node name="SpeedPowerUp" type="Area2D"]
+script = ExtResource("1_rdsph")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.992157, 0.541176, 0.294118, 1)
+scale = Vector2(0.46875, 0.46875)
+texture = ExtResource("1_d7d4t")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_yt4jg")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

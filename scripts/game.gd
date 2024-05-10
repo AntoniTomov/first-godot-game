@@ -2,6 +2,9 @@ extends Node2D
 
 @onready var platform_parent = $PlatformParent
 
+
+var power_up = preload("res://scenes/speed_power_up.tscn");
+var static_platform = preload("res://scenes/static_platform.tscn");
 var camera_scene = preload("res://scenes/camera_2d.tscn");
 var platform_scene = preload("res://scenes/platform.tscn");
 var player_scene = preload("res://scenes/player.tscn");
@@ -36,7 +39,7 @@ func _ready():
 func create_ground_layer(ground_layer_platform_count, platform_width):
 	for i in range(ground_layer_platform_count):
 		var ground_location = Vector2(i * platform_width, 0);
-		create_platform(ground_location);
+		create_platform(ground_location,true);
 		
 	
 func create_level(viewport_size, platform_width, ground_layer_platform_count):
@@ -54,7 +57,7 @@ func create_level(viewport_size, platform_width, ground_layer_platform_count):
 		location.y = next_step_y;
 		previous_step_y = next_step_y;
 		
-		create_platform(location);
+		create_platform(location,false);
 	
 func _process(delta):
 	if Input.is_action_just_pressed("quit"):
@@ -63,16 +66,28 @@ func _process(delta):
 		get_tree().reload_current_scene();
 	
 	
-func create_platform(location: Vector2):
+func create_platform(location: Vector2, is_ground: bool):
+	var vanishing_platform = static_platform.instantiate();
 	var platform = platform_scene.instantiate();
 	platform.global_position = location;
+	vanishing_platform.global_position = location;
 	print(location)
 	
-	#if location:
-		#print(location)
-		#platform.global_position = location;
-	#else:
-		#print('No location: ', Vector2(random_number_x, random_number_y))
-		#platform.global_position = Vector2(random_number_x, random_number_y);
-	platform_parent.add_child(platform);
-	return platform;
+	var random_platform = randf_range(1, 100);
+	
+	
+	if is_ground:
+		platform_parent.add_child(platform);
+	else:
+		if random_platform > 40 and random_platform < 70:
+			create_powerup(location);
+		if random_platform < 67:
+			platform_parent.add_child(platform);
+		else:
+			platform_parent.add_child(vanishing_platform);
+	
+func create_powerup(location):
+		var power_up_inst = power_up.instantiate()
+		var power_location = Vector2(location.x, location.y - 150)
+		power_up_inst.global_position = power_location
+		platform_parent.add_child(power_up_inst)
